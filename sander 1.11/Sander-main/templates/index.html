@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barcelona-Bayern Munich</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        h1 { text-align: center; }
+        #scoreboard, #events, #time-info { margin: 20px auto; width: 80%; text-align: center; }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <h1>Barcelona-Bayern Munich</h1>
+
+    <!-- Scoreboard Section -->
+    <div id="scoreboard">
+        <h2>Score</h2>
+        <p id="score">Barcelona: 0 - Bayern Munich: 0</p>
+    </div>
+
+    <!-- Time Info Section -->
+    <div id="time-info">
+        <h2>Time Info:</h2>
+        <p id="time">{{ time_info }}</p> <!-- Id toegevoegd voor eenvoudige toegang -->
+    </div>
+
+    <!-- Events Section -->
+    <div id="events">
+        <h2>Events:</h2>
+        <ul id="events-list">
+            {% for event in events %}
+                <li>{{ event }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <script>
+        // Function to update the score dynamically
+        function updateScore() {
+            $.get('/score', function(data) {
+                $('#score').text('Barcelona: ' + data.Barcelona + ' - Bayern Munich: ' + data['Bayern Munich']);
+            });
+        }
+
+        // Function to update the time dynamically
+        function updateTime() {
+            $.get('/data', function(data) {
+                $('#time').text(data.time_info); // Update de tijd in de HTML
+            });
+        }
+
+        // Function to update the events dynamically
+        function updateEvents() {
+            $.get('/events', function(data) {
+                var eventsList = $('#events-list');
+                eventsList.empty(); // Maak de lijst leeg voor nieuwe evenementen
+                data.forEach(function(event) {
+                    eventsList.append('<li>' + event + '</li>'); // Voeg elk event toe aan de lijst
+                });
+            });
+        }
+
+        // Update score every second without refreshing the whole page
+        setInterval(updateScore, 1000);
+        // Update events every second without refreshing the whole page
+        setInterval(updateEvents, 1000);
+        // Update time every second without refreshing the whole page
+        setInterval(updateTime, 1000); // Toegevoegd om de tijd te updaten
+    </script>
+</body>
+</html>
